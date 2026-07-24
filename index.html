@@ -12,11 +12,15 @@
 <body>
 
 <header class="top-bar">
-  <h1>🕐 시계 친구</h1>
+  <div class="title-row">
+    <h1>🕐 시계 친구</h1>
+    <button id="shareBtn" class="share-btn" title="링크 공유" aria-label="링크 공유">🔗</button>
+  </div>
   <nav class="mode-tabs" id="modeTabs">
     <button class="tab-btn active" data-mode="live">실시간 보기</button>
     <button class="tab-btn" data-mode="practice">연습하기</button>
   </nav>
+  <p id="shareToast" class="share-toast" hidden>링크가 복사됐어요!</p>
 </header>
 
 <nav class="sub-tabs" id="subTabs" hidden>

@@ -9,6 +9,8 @@
   const digitalTime = document.getElementById('digitalTime');
   const digitalAmpm = document.getElementById('digitalAmpm');
   const analogSvg = document.getElementById('analogClock');
+  const shareBtn = document.getElementById('shareBtn');
+  const shareToast = document.getElementById('shareToast');
 
   let mode = 'live';       // 'live' | 'practice'
   let subMode = 'free';    // 'free' | 'quiz'
@@ -132,6 +134,30 @@
       quizFeedback.className = 'quiz-feedback wrong';
       analogSvg.classList.add('shake');
       setTimeout(() => analogSvg.classList.remove('shake'), 400);
+    }
+  });
+
+  function showShareToast() {
+    shareToast.hidden = false;
+    clearTimeout(showShareToast._t);
+    showShareToast._t = setTimeout(() => { shareToast.hidden = true; }, 2000);
+  }
+
+  shareBtn.addEventListener('click', async () => {
+    const url = location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url });
+      } catch (e) {
+        // 사용자가 공유를 취소한 경우 등은 무시
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showShareToast();
+    } catch (e) {
+      window.prompt('아래 링크를 복사하세요', url);
     }
   });
 

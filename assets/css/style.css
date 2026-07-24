@@ -30,7 +30,38 @@ body {
 
 .top-bar h1 {
   font-size: 1.6rem;
+  margin: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   margin: 8px 0 16px;
+}
+
+.share-btn {
+  border: none;
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  font-size: 1.05rem;
+  background: #fff;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.08);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.share-btn:active {
+  transform: scale(0.92);
+}
+
+.share-toast {
+  margin: -8px 0 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--green);
 }
 
 .mode-tabs, .sub-tabs {
