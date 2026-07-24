@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>시계 친구 - 시간 배우기</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#FF6B6B">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="top-bar">
+  <h1>🕐 시계 친구</h1>
+  <nav class="mode-tabs" id="modeTabs">
+    <button class="tab-btn active" data-mode="live">실시간 보기</button>
+    <button class="tab-btn" data-mode="practice">연습하기</button>
+  </nav>
+</header>
+
+<nav class="sub-tabs" id="subTabs" hidden>
+  <button class="sub-tab-btn active" data-submode="free">자유롭게 놀기</button>
+  <button class="sub-tab-btn" data-submode="quiz">문제 풀기</button>
+</nav>
+
+<main>
+  <div id="quizCard" class="quiz-card" hidden>
+    <p class="quiz-label">이 시간을 만들어보세요</p>
+    <p class="quiz-target" id="quizTarget">오후 3시 47분</p>
+    <p class="quiz-feedback" id="quizFeedback"></p>
+  </div>
+
+  <div class="clock-stage">
+    <svg id="analogClock" class="analog-clock" viewBox="-10 -10 320 320">
+      <circle class="clock-face" cx="150" cy="150" r="130"/>
+      <g id="clockTicks"></g>
+      <g id="clockNumbers"></g>
+      <g id="minuteNumbers"></g>
+      <line id="hourHand" class="hand hour-hand" x1="150" y1="150" x2="150" y2="90"/>
+      <line id="minuteHand" class="hand minute-hand" x1="150" y1="150" x2="150" y2="55"/>
+      <line id="secondHand" class="hand second-hand" x1="150" y1="150" x2="150" y2="45" hidden/>
+      <circle class="clock-center" cx="150" cy="150" r="8"/>
+      <line id="hourHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="90"/>
+      <line id="minuteHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="55"/>
+    </svg>
+
+    <div class="digital-clock" id="digitalClock">
+      <span id="digitalTime">12:00</span>
+      <span id="digitalAmpm">오전</span>
+    </div>
+  </div>
+
+  <button id="checkBtn" class="check-btn" hidden>확인!</button>
+</main>
+
+<script src="assets/js/clock.js"></script>
+<script src="assets/js/quiz.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
