@@ -33,15 +33,23 @@ body {
   margin: 0;
 }
 
+/* 제목은 가운데, 링크 복사 버튼은 오른쪽 끝에 붙인다.
+   버튼을 흐름에서 빼야 제목이 버튼 폭만큼 밀리지 않는다. */
 .title-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   margin: 8px 0 16px;
+  padding: 0 46px;
 }
 
 .share-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   border: none;
   border-radius: 999px;
   width: 34px;
@@ -54,7 +62,7 @@ body {
 }
 
 .share-btn:active {
-  transform: scale(0.92);
+  transform: translateY(-50%) scale(0.92);
 }
 
 .share-toast {
