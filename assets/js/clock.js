@@ -1,11 +1,20 @@
 // 아날로그 시계: 렌더링 + 드래그 조작
 const AnalogClock = (() => {
   const CX = 150, CY = 150;
-  let svg, hourHand, minuteHand, secondHand, hourHit, minuteHit;
+  // 바깥부터 안쪽으로: 분 안내 숫자 → 눈금 → 경과 분 게이지 → 시 숫자
+  const R_MINUTE_NUM = 131;
+  const R_TICK_OUT = 120;
+  const R_TICK_MINOR = 113;
+  const R_TICK_MAJOR = 106;
+  const R_ARC = 96;
+  const R_HOUR_NUM = 74;
+
+  let svg, hourHand, minuteHand, secondHand, hourHit, minuteHit, minuteArc;
   let state = { hour: 12, minute: 0, isPM: false };
   let draggable = false;
   let changeListeners = [];
   let dragInfo = null;
+  let secTurns = 0, prevSec = null;
 
   function hour24(s) {
     return (s.hour % 12) + (s.isPM ? 12 : 0);
@@ -26,8 +35,8 @@ const AnalogClock = (() => {
     for (let i = 0; i < 60; i++) {
       const angle = i * 6;
       const major = i % 5 === 0;
-      const r1 = major ? 108 : 118;
-      const r2 = 128;
+      const r1 = major ? R_TICK_MAJOR : R_TICK_MINOR;
+      const r2 = R_TICK_OUT;
       const line = svgEl('line', {
         x1: CX, y1: CY - r1, x2: CX, y2: CY - r2,
         class: 'tick' + (major ? ' major' : ''),
@@ -37,7 +46,7 @@ const AnalogClock = (() => {
     }
     for (let n = 1; n <= 12; n++) {
       const angle = n * 30 * (Math.PI / 180);
-      const r = 88;
+      const r = R_HOUR_NUM;
       const x = CX + r * Math.sin(angle);
       const y = CY - r * Math.cos(angle);
       const text = svgEl('text', { x, y, class: 'clock-number' });
@@ -47,7 +56,7 @@ const AnalogClock = (() => {
     // 5분 단위 가이드 숫자 (5,10,...,60) - 분침 색으로 바깥쪽 링에 표시 (1분 눈금과 함께 시간 읽기 학습)
     for (let m = 0; m < 60; m += 5) {
       const angle = m * 6 * (Math.PI / 180);
-      const r = 144;
+      const r = R_MINUTE_NUM;
       const x = CX + r * Math.sin(angle);
       const y = CY - r * Math.cos(angle);
       const label = m === 0 ? '60' : String(m);
@@ -63,6 +72,16 @@ const AnalogClock = (() => {
     return el;
   }
 
+  // 12시부터 현재 분침까지의 호 — 몇 분 지났는지를 '양'으로 보여준다
+  function arcPath(r, deg) {
+    if (deg <= 0) return '';
+    const d = Math.min(deg, 359.9);
+    const rad = (d - 90) * (Math.PI / 180);
+    const x = CX + r * Math.cos(rad);
+    const y = CY + r * Math.sin(rad);
+    return `M ${CX} ${CY - r} A ${r} ${r} 0 ${d > 180 ? 1 : 0} 1 ${x} ${y}`;
+  }
+
   function render() {
     const minuteAngle = state.minute * 6;
     const hourAngle = (state.hour % 12) * 30 + state.minute * 0.5;
@@ -70,13 +89,17 @@ const AnalogClock = (() => {
     setRotate(hourHit, hourAngle);
     setRotate(minuteHand, minuteAngle);
     setRotate(minuteHit, minuteAngle);
+    minuteArc.setAttribute('d', arcPath(R_ARC, minuteAngle));
     changeListeners.forEach(fn => fn({ ...state }));
   }
 
   function renderSeconds(date) {
     if (secondHand.hasAttribute('hidden')) return;
     const sec = date.getSeconds();
-    setRotate(secondHand, sec * 6);
+    // 59초 → 0초에서 뒤로 되감기지 않도록 각도를 계속 누적한다
+    if (prevSec !== null && sec < prevSec) secTurns++;
+    prevSec = sec;
+    setRotate(secondHand, secTurns * 360 + sec * 6);
   }
 
   function setRotate(el, deg) {
@@ -149,6 +172,7 @@ const AnalogClock = (() => {
     secondHand = svg.querySelector('#secondHand');
     hourHit = svg.querySelector('#hourHandHit');
     minuteHit = svg.querySelector('#minuteHandHit');
+    minuteArc = svg.querySelector('#minuteArc');
     drawFace();
     hourHit.addEventListener('pointerdown', e => onPointerDown('hour', e));
     minuteHit.addEventListener('pointerdown', e => onPointerDown('minute', e));
@@ -170,6 +194,14 @@ const AnalogClock = (() => {
     },
     showSeconds(v) {
       secondHand.toggleAttribute('hidden', !v);
+      if (!v) return;
+      // 다시 보일 때는 이전 각도에서 애니메이션으로 되감기지 않게 첫 프레임만 전환을 끈다
+      secTurns = 0;
+      prevSec = null;
+      secondHand.classList.add('no-anim');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        secondHand.classList.remove('no-anim');
+      }));
     },
     renderSeconds,
     onChange(fn) { changeListeners.push(fn); }

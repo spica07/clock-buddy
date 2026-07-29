@@ -18,9 +18,13 @@
 
   AnalogClock.init('#analogClock');
 
+  // 시는 시침 색, 분은 분침 색 — 어떤 바늘이 어떤 숫자인지 색으로 짝지어 준다
   function updateDigital(state) {
     const mm = String(state.minute).padStart(2, '0');
-    digitalTime.textContent = `${state.hour}:${mm}`;
+    digitalTime.innerHTML =
+      `<span class="dc-h">${state.hour}</span>` +
+      `<span class="dc-sep">:</span>` +
+      `<span class="dc-m">${mm}</span>`;
     digitalAmpm.textContent = state.isPM ? '오후' : '오전';
   }
 
@@ -81,7 +85,10 @@
     quizFeedback.textContent = '';
     quizFeedback.className = 'quiz-feedback';
     const target = Quiz.newProblem();
-    quizTarget.textContent = Quiz.formatTarget(target);
+    quizTarget.innerHTML =
+      `<span class="t-ampm">${target.isPM ? '오후' : '오전'}</span>` +
+      `<span class="t-h">${target.hour}시</span> ` +
+      `<span class="t-m">${target.minute}분</span>`;
     AnalogClock.setState({ hour: 12, minute: 0, isPM: target.isPM });
   }
 
@@ -90,7 +97,9 @@
     mode = newMode;
     stopLiveTimer();
     [...modeTabs.querySelectorAll('.tab-btn')].forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.mode === newMode);
+      const on = btn.dataset.mode === newMode;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
     });
     if (mode === 'live') enterLiveMode();
     else enterPracticeMode();
@@ -100,7 +109,9 @@
     if (subMode === newSub) return;
     subMode = newSub;
     [...subTabs.querySelectorAll('.sub-tab-btn')].forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.submode === newSub);
+      const on = btn.dataset.submode === newSub;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
     });
     if (subMode === 'free') enterFreeMode();
     else enterQuizMode();

@@ -6,61 +6,82 @@
 <title>시계 친구 - 시간 배우기</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#FF6B6B">
+<meta name="theme-color" content="#E8ECF4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1220" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<header class="top-bar">
-  <div class="title-row">
-    <h1>🕐 시계 친구</h1>
-    <button id="shareBtn" class="share-btn" title="링크 공유" aria-label="링크 공유">🔗</button>
-  </div>
-  <nav class="mode-tabs" id="modeTabs">
-    <button class="tab-btn active" data-mode="live">실시간 보기</button>
-    <button class="tab-btn" data-mode="practice">연습하기</button>
-  </nav>
-  <p id="shareToast" class="share-toast" hidden>링크가 복사됐어요!</p>
-</header>
+<div class="app">
 
-<nav class="sub-tabs" id="subTabs" hidden>
-  <button class="sub-tab-btn active" data-submode="free">자유롭게 놀기</button>
-  <button class="sub-tab-btn" data-submode="quiz">문제 풀기</button>
-</nav>
-
-<main>
-  <div id="quizCard" class="quiz-card" hidden>
-    <p class="quiz-label">이 시간을 만들어보세요</p>
-    <p class="quiz-target" id="quizTarget">오후 3시 47분</p>
-    <p class="quiz-feedback" id="quizFeedback"></p>
-  </div>
-
-  <div class="clock-stage">
-    <svg id="analogClock" class="analog-clock" viewBox="-10 -10 320 320">
-      <circle class="clock-face" cx="150" cy="150" r="130"/>
-      <g id="clockTicks"></g>
-      <g id="clockNumbers"></g>
-      <g id="minuteNumbers"></g>
-      <line id="hourHand" class="hand hour-hand" x1="150" y1="150" x2="150" y2="90"/>
-      <line id="minuteHand" class="hand minute-hand" x1="150" y1="150" x2="150" y2="55"/>
-      <line id="secondHand" class="hand second-hand" x1="150" y1="150" x2="150" y2="45" hidden/>
-      <circle class="clock-center" cx="150" cy="150" r="8"/>
-      <line id="hourHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="90"/>
-      <line id="minuteHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="55"/>
-    </svg>
-
-    <div class="digital-clock" id="digitalClock">
-      <span id="digitalTime">12:00</span>
-      <span id="digitalAmpm">오전</span>
+  <header class="top-bar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.2"/>
+        <line x1="16" y1="16" x2="16" y2="8.5" stroke="var(--minute)" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="16" y1="16" x2="21" y2="18.5" stroke="var(--hour)" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h1>시계 친구</h1>
     </div>
-  </div>
+    <button id="shareBtn" class="icon-btn" title="링크 공유" aria-label="링크 공유">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9.8 14.2 14.2 9.8"/>
+        <path d="M12.2 7.6 13.8 6a3.7 3.7 0 0 1 5.2 5.2l-1.6 1.6"/>
+        <path d="M11.8 16.4 10.2 18A3.7 3.7 0 0 1 5 12.8l1.6-1.6"/>
+      </svg>
+    </button>
+  </header>
 
-  <button id="checkBtn" class="check-btn" hidden>확인!</button>
-</main>
+  <p id="shareToast" class="share-toast" role="status" hidden>링크를 복사했어요</p>
 
-<footer class="site-footer">
-  &copy; 2026 spica07. All rights reserved. 무단 복제 및 재배포를 금지합니다.
-</footer>
+  <nav class="segmented mode-tabs" id="modeTabs" aria-label="모드 선택">
+    <button class="tab-btn active" data-mode="live" aria-pressed="true">실시간 보기</button>
+    <button class="tab-btn" data-mode="practice" aria-pressed="false">연습하기</button>
+  </nav>
+
+  <nav class="segmented sub-tabs" id="subTabs" aria-label="연습 방식" hidden>
+    <button class="sub-tab-btn active" data-submode="free" aria-pressed="true">자유롭게 놀기</button>
+    <button class="sub-tab-btn" data-submode="quiz" aria-pressed="false">문제 풀기</button>
+  </nav>
+
+  <main>
+    <div id="quizCard" class="quiz-card" hidden>
+      <p class="quiz-label">이 시간을 만들어 보세요</p>
+      <p class="quiz-target" id="quizTarget">오후 3시 47분</p>
+      <p class="quiz-feedback" id="quizFeedback" role="status"></p>
+    </div>
+
+    <div class="clock-stage">
+      <svg id="analogClock" class="analog-clock" viewBox="0 0 300 300">
+        <circle class="dial-ring" cx="150" cy="150" r="141"/>
+        <g id="clockTicks"></g>
+        <circle class="arc-track" cx="150" cy="150" r="96"/>
+        <path id="minuteArc" class="minute-arc"/>
+        <g id="clockNumbers"></g>
+        <g id="minuteNumbers"></g>
+        <line id="hourHand" class="hand hour-hand" x1="150" y1="162" x2="150" y2="92"/>
+        <line id="minuteHand" class="hand minute-hand" x1="150" y1="164" x2="150" y2="50"/>
+        <line id="secondHand" class="hand second-hand" x1="150" y1="172" x2="150" y2="40" hidden/>
+        <circle class="clock-center" cx="150" cy="150" r="8"/>
+        <circle class="clock-center-dot" cx="150" cy="150" r="3"/>
+        <line id="hourHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="92"/>
+        <line id="minuteHandHit" class="hand-hit" x1="150" y1="150" x2="150" y2="50"/>
+      </svg>
+
+      <div class="digital-clock" id="digitalClock">
+        <span class="dc-ampm" id="digitalAmpm">오전</span>
+        <span class="dc-time" id="digitalTime">12:00</span>
+      </div>
+    </div>
+
+    <button id="checkBtn" class="check-btn" hidden>확인!</button>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2026 spica07. All rights reserved. 무단 복제 및 재배포를 금지합니다.
+  </footer>
+
+</div>
 
 <script src="assets/js/clock.js"></script>
 <script src="assets/js/quiz.js"></script>
