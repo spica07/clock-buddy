@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clock-buddy-v2';
+const CACHE_NAME = 'clock-buddy-v3';
 const ASSETS = [
   './',
   './index.html',
